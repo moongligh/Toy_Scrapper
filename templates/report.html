@@ -3,8 +3,28 @@
     <head>
         <title>Job Search</title>
     </head>
+    <style>
+        section{
+            display: grid;
+            gap: 20px;
+            grid-template-columns: repeat(4, 1fr);
+        }
+    </style>
     <body>
         <h1>Search Results</h1>
         <h3> Found {{resultsNumber}} results for: {{SearchingBy}} </h3>
+        <section>
+            <h4>Title</h4>
+            <h4>Company</h4>
+            <h4>Location</h4>
+            <h4>Link</h4>
+
+            {% for job in jobs %}
+                <span>{{ job.title }}</span>
+                <span>{{ job.company }}</span>
+                <span>{{ job.location }}</span>
+                <a href='{{job.link}}' target='blank'> 지원하러가기 </a>
+            {% endfor %}
+        </section>
     </body>
 </html>

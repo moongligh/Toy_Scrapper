@@ -6,8 +6,14 @@ from bs4 import BeautifulSoup as bs
 def so_get_last_page(URL):    # 페이지 추출 함수
     result = req.get(URL)
     soup = bs(result.text, 'html.parser')
-    pages = soup.find('div', {'class': 's-pagination'}).find_all('a')
-    last_page = pages[-2].get_text(strip=True)
+    pages = soup.find('div', {'class': 's-pagination'})
+
+    if pages is None:   # 페이지 네비게이션이 없을경우를 위한 조건문
+        last_page = 0
+    else:
+        pages.find_all('a')
+        last_page = pages[-2].get_text(strip=True)
+
     return int(last_page)
 
 def so_extract_job(html):  # 채용정보를 추출하여 doc 형태로 리턴
@@ -22,7 +28,7 @@ def so_extract_job(html):  # 채용정보를 추출하여 doc 형태로 리턴
 
     job_id = html['data-jobid']
 
-    return {'tite': title,
+    return {'title': title,
         'company': company,
         'location': location,
         'link': f'https://stackoverflow.com/jobs/{job_id}'
@@ -61,13 +67,17 @@ def indeed_get_last_page(URL):    # 페이지 추출 함수
     result = req.get(URL)
     soup = bs(result.text, 'html.parser')
     pagination = soup.find('div', {'class': 'pagination'})
-    links = pagination.find_all('a')
-    pages = []
 
-    for link in links[:-1]: # 마지막 a링크는 '다음'으로 페이지가 아니므로 삭제
-        pages.append(int(link.find('span').string)) # link에 String요소가 하나라면 link.string으로 수정가능
-    
-    last_page = pages[-1] # 마지막 페이지 추출
+    if pagination is None:  # 페이지 네비게이션이 없을경우를 위한 조건문
+        last_page = 0
+    else:
+        links = pagination.find_all('a')
+        pages = []
+
+        for link in links[:-1]: # 마지막 a링크는 '다음'으로 페이지가 아니므로 삭제
+            pages.append(int(link.find('span').string)) # link에 String요소가 하나라면 link.string으로 수정가능
+        last_page = pages[-1] # 마지막 페이지 추출
+
     return last_page
 
 def indeed_extract_job(html): # 채용정보를 추출하여 doc 형태로 리턴
