@@ -11,7 +11,7 @@ def so_get_last_page(URL):    # 페이지 추출 함수
     if pages is None:   # 페이지 네비게이션이 없을경우를 위한 조건문
         last_page = 0
     else:
-        pages.find_all('a')
+        pages = pages.find_all('span')
         last_page = pages[-2].get_text(strip=True)
 
     return int(last_page)
@@ -19,8 +19,8 @@ def so_get_last_page(URL):    # 페이지 추출 함수
 def so_extract_job(html):  # 채용정보를 추출하여 doc 형태로 리턴
     title = html.find('a', {'class': 's-link'})['title']
     company, location = html.find('h3').find_all('span', recursive=False) # unpack value를 이용하기 위해 첫단계 'span'만 수집
-    company.get_text(strip=True)
-    location.get_text(strip=True).strip('-').strip(' \r').strip('\n')
+    company = company.get_text(strip=True)
+    location = location.get_text(strip=True).strip('-').strip(' \r').strip('\n')
 
     # company_location = html.find('h3').get_text(strip=True) # h3태그 안의 모든 text를 가져온다.
     # company = company_location.split('•')[0]    # 가져온 text의 값 중 • 을 기준으로 앞은 회사 뒤는 지역을 할당한다.
